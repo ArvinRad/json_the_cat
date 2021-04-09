@@ -1,15 +1,16 @@
-const address = process.argv;
-const request = require('request');
-let breed = address[2];
-let data = {};
+// A function for finding a cat breed description from the API: https://api.thecatapi.com
 
-const  fetchBreedDescription = () => {
+const  fetchBreedDescription = (breed, callback) => {
+  const request = require('request');
   request(`https://api.thecatapi.com/v1/breeds/search?q=${breed}`, (error, response, body) => {
-    data = JSON.parse(body);
-    if (data.length === 0) {
-      console.log(`${error} - the requested breed is not found.`);
+    if (body.length < 3) {
+      desc = "";
+      err = true;
+    } else {
+      desc = JSON.parse(body)[0].description;
+      err = false;
     }
-    return console.log(data);
+    callback (err, desc);
   });
 };
-fetchBreedDescription(breed);
+module.exports = fetchBreedDescription;
